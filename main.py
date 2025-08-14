@@ -62,16 +62,28 @@ def get_current_oncall():
     return None
 
 def send_pushover(user_key, message):
-    requests.post("https://api.pushover.net/1/messages.json", data={
-        "token": PUSHOVER_TOKEN,
-        "user": user_key,
-        "message": message,
-        "priority": 2
-    })
+    try:
+        resp = requests.post("https://api.pushover.net/1/messages.json", data={
+            "token": PUSHOVER_TOKEN,
+            "user": user_key,
+            "message": message,
+            "priority": 2,
+            "retry": 60,
+            "expire": 1800 
+        })
+        resp.raise_for_status()
+    except Exception as e:
+        logging.error(f"Pushover error for user {user_key}: {e}")
+        raise
 
-def send_telegram(user_id, message):
+def send_telegram(chat_id, message):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    requests.post(url, json={"chat_id": user_id, "text": message})
+    try:
+        resp = requests.post(url, json={"chat_id": chat_id, "text": message})
+        resp.raise_for_status()
+    except Exception as e:
+        logging.error(f"Telegram error for chat {chat_id}: {e}")
+        raise
 
 @app.route("/alert", methods=["POST"])
 def alert():
@@ -86,15 +98,27 @@ def alert():
 
     final_message = f"On-call: {', '.join(oncall_people)}\n{alert_message}"
 
+    errors = []
+
     for person in oncall_people:
         if person in CONTACTS:
-            send_pushover(CONTACTS[person]["pushover_user_key"], final_message)
+            try:
+                send_pushover(CONTACTS[person]["pushover_user_key"], final_message)
+            except Exception:
+                errors.append(f"Pushover failed for {person}")
         else:
-            logging.warning(f"No Pushover contact found for '{person}'. Alert not sent to this person.")
+            logging.warning(f"No Pushover contact found for '{person}'")
+            errors.append(f"No contact for {person}")
 
-    send_telegram(TELEGRAM_GROUP_ID, final_message)
+    try:
+        send_telegram(TELEGRAM_GROUP_ID, final_message)
+    except Exception:
+        errors.append("Telegram failed")
 
-    return jsonify({"status": "sent", "oncall": oncall_people})
+    if errors:
+        return jsonify({"status": "partial_failure", "errors": errors, "oncall": oncall_people}), 207
+    else:
+        return jsonify({"status": "sent", "oncall": oncall_people})
 
 if __name__ == "__main__":
     if os.environ.get("FLASK_ENV") == "development":
