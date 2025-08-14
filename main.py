@@ -65,7 +65,8 @@ def send_pushover(user_key, message):
     requests.post("https://api.pushover.net/1/messages.json", data={
         "token": PUSHOVER_TOKEN,
         "user": user_key,
-        "message": message
+        "message": message,
+        "priority": 2
     })
 
 def send_telegram(user_id, message):
