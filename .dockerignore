@@ -3,3 +3,6 @@ __pycache__/
 *.pyo
 *.env
 venv/
+
+gc_service_account_key.json
+contacts.json

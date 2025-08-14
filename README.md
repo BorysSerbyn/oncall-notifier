@@ -5,7 +5,7 @@ A simple tool to notify team members about on-call schedules.
 ## Features
 
 - Retrieves schedule from google calendar
-- Sends "Emergency Notification" to pushover
+- Sends "Emergency Notification" to pushover  (resends every minute for 30 minutes if not aknowledged, this can be configured in the python code)
 - Sends notification to telegram group
 
 ## Missing Features
