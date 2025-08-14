@@ -88,6 +88,7 @@ def send_telegram(chat_id, message):
 @app.route("/alert", methods=["POST"])
 def alert():
     data = request.json
+    logging.info(f"Received alert: {data}")
     alert_message = f"[ALERT] {data.get('title', 'No Title')} - {data.get('message', '')}"
 
     oncall_event = get_current_oncall()
