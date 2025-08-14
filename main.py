@@ -14,6 +14,13 @@ import logging
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
+required_envs = ["CALENDAR_ID", "GOOGLE_CRED_FILE", "PUSHOVER_TOKEN",
+                 "TELEGRAM_BOT_TOKEN", "TELEGRAM_GROUP_ID", "CONTACTS_FILE"]
+
+for var in required_envs:
+    if var not in os.environ:
+        raise RuntimeError(f"Environment variable {var} is missing")
+
 CALENDAR_ID = os.environ["CALENDAR_ID"]
 GOOGLE_CRED_FILE = os.environ["GOOGLE_CRED_FILE"]
 PUSHOVER_TOKEN = os.environ["PUSHOVER_TOKEN"]
