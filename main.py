@@ -6,8 +6,13 @@ from flask import Flask, request, jsonify
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from dotenv import load_dotenv
+from zoneinfo import ZoneInfo
+from dateutil import parser
+import logging
+
 
 load_dotenv()
+logging.basicConfig(level=logging.INFO)
 
 CALENDAR_ID = os.environ["CALENDAR_ID"]
 GOOGLE_CRED_FILE = os.environ["GOOGLE_CRED_FILE"]
@@ -26,19 +31,26 @@ service = build('calendar', 'v3', credentials=creds)
 app = Flask(__name__)
 
 def get_current_oncall():
-    now = datetime.datetime.utcnow().isoformat() + 'Z'
+    # Get calendar timezone
+    calendar = service.calendars().get(calendarId=CALENDAR_ID).execute()
+    calendar_tz = calendar['timeZone']
+    
+    now = datetime.datetime.now(datetime.timezone.utc).astimezone(ZoneInfo(calendar_tz))
+    time_max = now + datetime.timedelta(days=7)
+    
     events_result = service.events().list(
         calendarId=CALENDAR_ID,
-        timeMin=now,
-        timeMax=(datetime.datetime.utcnow() + datetime.timedelta(days=1)).isoformat() + 'Z',
+        timeMin=now.isoformat(),
+        timeMax=time_max.isoformat(),
         singleEvents=True,
         orderBy='startTime'
     ).execute()
+    
     events = events_result.get('items', [])
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         end = event['end'].get('dateTime', event['end'].get('date'))
-        if start <= datetime.datetime.utcnow().isoformat() <= end:
+        if start <= now.isoformat() <= end:
             return event['summary']
     return None
 
@@ -69,9 +81,13 @@ def alert():
     for person in oncall_people:
         if person in CONTACTS:
             send_pushover(CONTACTS[person]["pushover_user_key"], final_message)
+        else:
+            logging.warning(f"No Pushover contact found for '{person}'. Alert not sent to this person.")
 
     send_telegram(TELEGRAM_GROUP_ID, final_message)
 
     return jsonify({"status": "sent", "oncall": oncall_people})
 
-
+if __name__ == "__main__":
+    if os.environ.get("FLASK_ENV") == "development":
+        app.run(host="0.0.0.0", port=5000, debug=True)
