@@ -13,6 +13,26 @@ A simple tool to notify team members about on-call schedules.
 - Does not group alerts into incidents which could cause spam (potentially fixable upstream)
 - Doesnt escalate an alert to a superviser. At the moment, in order to enable a feature like this, you would need to have 2 way communication on your network to allow people to mark alerts as taken. However, this isnt possible for us at the moment so we are not implementing this.
 
+## Configure webhook in uptime kuma
+1. Setup Notification (webook)
+2. set the Post Url to `<domain name>/alert`
+3. set custom body to:
+    ```JSON
+        {
+            "title": "Uptime Kuma",
+            "message": "{{msg}}"
+        }
+    ```
+4. set additional headers to:
+    ```JSON
+        {
+            "Content-Type": "application/json"
+        }
+    ```
+
+*Important note: it is not yet implemented, but we can also leverage other useful vars in the body like heartbeatJSON, monitorJSON, but this is not yet implemented*
+
+
 ## Local development
 
 1. create a .env file with all the required vars.
@@ -43,6 +63,15 @@ A simple tool to notify team members about on-call schedules.
 4. run the application:
     ```bash
     python main.py
+    ```
+5. make a test request:
+    ```bash
+    curl -X POST http://localhost:5000/alert \
+        -H "Content-Type: application/json" \
+        -d '{
+        "title": "Test Alert",
+        "message": "This is a test from Uptime Kuma"
+    }'
     ```
 
 ## Docker local testing
