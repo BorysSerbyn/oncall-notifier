@@ -15,28 +15,28 @@ A simple tool to notify team members about on-call schedules.
 
 ## How to use google calendar
 
-Its fairly simple, just create an event that lasts the length of a shift, and title it the names of the employs that are on-call during that shift (seperated but a comma and a space). For example, you can title your event: Bob, Alice, George. This will notify all 3 of these people in case of an alert.
+Its fairly simple, just create an event that lasts the length of a shift, and title it the names of the employs that are on-call during that shift (seperated but a comma and a space). For example, you can title your event: Bob, Alice, George. This will notify all 3 of these people in case of an alert. **But make sure that all these names are in the `contact.json` file.**
 
 It is recommended to create a seperate google calendar (settings>Add new calendar>Create new calendar). That way, you can uncheck it so you dont see it when viewing your other calendars on that account.
 
 ## Configure webhook in uptime kuma
 1. Setup Notification (webook)
-2. set the Post Url to `<domain name>/alert`
-3. set custom body to:
+2. Set the Post Url to `<domain name>/alert`
+3. Set custom body to:
     ```JSON
         {
             "title": "Uptime Kuma",
             "message": "{{msg}}"
         }
     ```
-4. set additional headers to:
+4. Set additional headers to:
     ```JSON
         {
             "Content-Type": "application/json"
         }
     ```
 
-*Important note: it is not yet implemented, but we can also leverage other useful vars in the body like heartbeatJSON, monitorJSON, but this is not yet implemented*
+***Important note: it is not yet implemented, but we can also leverage other useful vars in the body like heartbeatJSON, monitorJSON, but this is not yet implemented***
 
 
 ## Local development
