@@ -13,6 +13,12 @@ A simple tool to notify team members about on-call schedules.
 - Does not group alerts into incidents which could cause spam (potentially fixable upstream)
 - Doesnt escalate an alert to a superviser. At the moment, in order to enable a feature like this, you would need to have 2 way communication on your network to allow people to mark alerts as taken. However, this isnt possible for us at the moment so we are not implementing this.
 
+## How to use google calendar
+
+Its fairly simple, just create an event that lasts the length of a shift, and title it the names of the employs that are on-call during that shift (seperated but a comma and a space). For example, you can title your event: Bob, Alice, George. This will notify all 3 of these people in case of an alert.
+
+It is recommended to create a seperate google calendar (settings>Add new calendar>Create new calendar). That way, you can uncheck it so you dont see it when viewing your other calendars on that account.
+
 ## Configure webhook in uptime kuma
 1. Setup Notification (webook)
 2. set the Post Url to `<domain name>/alert`
