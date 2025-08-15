@@ -10,7 +10,7 @@ A simple tool to notify team members about on-call schedules.
 
 ## Missing Features
 
-- Does not group alerts into incidents which could cause spam (potentially fixable upstream)
+- Does not group alerts into incidents which could cause spam (there is a branch in this repo that fixes this issue, but not merged due to lack of testing)
 - Doesnt escalate an alert to a superviser. At the moment, in order to enable a feature like this, you would need to have 2 way communication on your network to allow people to mark alerts as taken. However, this isnt possible for us at the moment so we are not implementing this.
 
 ## How to use google calendar
