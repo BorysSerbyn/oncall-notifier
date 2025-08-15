@@ -24,19 +24,20 @@ It is recommended to create a seperate google calendar (settings>Add new calenda
 2. Set the Post Url to `<domain name>/alert`
 3. Set custom body to:
     ```JSON
-        {
-            "title": "Uptime Kuma",
-            "message": "{{msg}}"
+        { 
+            "title": "Uptime Kuma Alert{% if monitorJSON %} - {{ monitorJSON['name'] }}{% endif %}", 
+            "message": "{{ msg}}",
+            "monitorJSON": {{ monitorJSON | jsonify }}
         }
     ```
+    **Note: Templatability is achieved via the Liquid templating language. Please refer to the documentation for usage instructions. These are the available variables: {{msg}}: message of the notification {{heartbeat JSON}}: object describing the heartbeat (only available for UP/DOWN notifications) {{monitorJSON}}: object describing the monitor (only available for UP/DOWN/Certificate expiry notifications)**
+
 4. Set additional headers to:
     ```JSON
         {
             "Content-Type": "application/json"
         }
     ```
-
-***Important note: it is not yet implemented, but we can also leverage other useful vars in the body like heartbeatJSON, monitorJSON, but this is not yet implemented***
 
 
 ## Local development
@@ -49,6 +50,7 @@ It is recommended to create a seperate google calendar (settings>Add new calenda
    - `TELEGRAM_GROUP_ID`
    - `CONTACTS_FILE`
    - `FLASK_ENV`
+   - `INCIDENTS_FILE`
 2. make sure your contacts are formatted as such
     ```json
     {
@@ -75,9 +77,12 @@ It is recommended to create a seperate google calendar (settings>Add new calenda
     curl -X POST http://localhost:5000/alert \
         -H "Content-Type: application/json" \
         -d '{
-        "title": "Test Alert",
-        "message": "This is a test from Uptime Kuma"
-    }'
+            "title": "Test Alert",
+            "message": "This is a test from Uptime Kuma",
+            "monitorJSON": {
+                "name": "Hello"
+            }
+        }'
     ```
 
 ## Docker local testing

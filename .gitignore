@@ -3,3 +3,4 @@ __pycache__/
 gc_service_account_key.json
 contacts.json
 .env
+incidents.json
