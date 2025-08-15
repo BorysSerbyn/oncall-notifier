@@ -24,11 +24,13 @@ It is recommended to create a seperate google calendar (settings>Add new calenda
 2. Set the Post Url to `<domain name>/alert`
 3. Set custom body to:
     ```JSON
-        {
-            "title": "Uptime Kuma",
-            "message": "{{msg}}"
+        { 
+            "title": "Uptime Kuma Alert{% if monitorJSON %} - {{ monitorJSON['name'] }}{% endif %}", 
+            "message": "{{ msg}}",
+            "monitorJSON": {{ monitorJSON | jsonify }}
         }
     ```
+    **Note: Templatability is achieved via the Liquid templating language. Please refer to the documentation for usage instructions. These are the available variables: {{msg}}: message of the notification {{heartbeat JSON}}: object describing the heartbeat (only available for UP/DOWN notifications) {{monitorJSON}}: object describing the monitor (only available for UP/DOWN/Certificate expiry notifications)**
 4. Set additional headers to:
     ```JSON
         {

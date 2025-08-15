@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "monitor_name": "Hello",
+    "status": "firing",
+    "firstOccurrenceTS": 1755281214.670475,
+    "lastNotificationSentTS": 1755281214.670475,
+    "alerts": [
+      {
+        "timestamp": "2025-08-15T18:06:54.670668+00:00",
+        "data": {
+          "title": "Test Alert",
+          "message": "This is a test from Uptime Kuma",
+          "monitorJSON": {
+            "name": "Hello"
+          }
+        }
+      },
+      {
+        "timestamp": "2025-08-15T18:07:02.974490+00:00",
+        "data": {
+          "title": "Test Alert",
+          "message": "This is a test from Uptime Kuma",
+          "monitorJSON": {
+            "name": "Hello"
+          }
+        }
+      },
+      {
+        "timestamp": "2025-08-15T18:08:53.718786+00:00",
+        "data": {
+          "title": "Test Alert",
+          "message": "This is a test from Uptime Kuma",
+          "monitorJSON": {
+            "name": "Hello"
+          }
+        }
+      }
+    ]
+  }
+]
